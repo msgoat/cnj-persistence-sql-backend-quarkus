@@ -6,7 +6,7 @@ Cloud native Quarkus application using JPA-based persistence to persist its doma
 
 ## Status
 
-![Build status](https://drone.cloudtrain.aws.msgoat.eu/api/badges/msgoat/cnj-persistence-sql-backend-quarkus/status.svg)
+![Build status](https://codebuild.eu-west-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiS2kvd1p0cXVWM2tEVzF6YTlYLzBOL1AwOXpQQzE5Tzd5eVdiSE5CeVpNWi8xdzBzampkK3JoczhxVUp1RVdFRFhwNTdhMFhiLzBXby9GN29xb3YydUdVPSIsIml2UGFyYW1ldGVyU3BlYyI6ImZMVk1WdlBKSlg0dXRDNmEiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main)
 
 ## Release information
 
