@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11-jre
+FROM docker.cloudtrain.aws.msgoat.eu/cloudtrain/cnj-docker-jre17:latest
 
 LABEL maintainer="michael.theis@msg.group"
 LABEL ${project.groupId}.${project.artifactId}.project="CloudTrain"
@@ -10,15 +10,15 @@ ARG ARG_JAVA_APPLICATION_HOME=/home/quarkus
 
 ENV JAVA_APPLICATION=${ARG_JAVA_APPLICATION} \
     JAVA_APPLICATION_HOME=${ARG_JAVA_APPLICATION_HOME} \
-    JAVA_OPTS="-XshowSettings:vm -XX:+UseG1GC -XX:MetaspaceSize=256m -XX:+DisableExplicitGC -XX:+UseStringDeduplication -XX:+ParallelRefProcEnabled" \
+    JAVA_OPTS="-XshowSettings:vm -XX:MetaspaceSize=256m -XX:+DisableExplicitGC -XX:+UseStringDeduplication -XX:+ParallelRefProcEnabled" \
     EXT_JAVA_OPTS="" \
-    DOCKER_JAVA_OPTS="-XX:+UseContainerSupport -XX:InitialRAMPercentage=75.0 -XX:MaxRAMPercentage=75.0" \
+    AGENT_JAVA_OPTS="" \
+    DOCKER_JAVA_OPTS="-XX:InitialRAMPercentage=75.0 -XX:MaxRAMPercentage=75.0" \
     QUARKUS_JAVA_OPTS="" \
-    QUARKUS_ARGUMENTS="" \
-    WAIT_FOR_URLS="" \
-    WAIT_FOR_ARGUMENTS="-i 5"
+    QUARKUS_ARGUMENTS=""
 
-RUN echo "adding non-root run user quarkus to system" && \
+# create non-root user to run application
+RUN echo "adding run user quarkus to system" && \
     addgroup --gid 1000 --system quarkus && \
     adduser --system --disabled-login --disabled-password --ingroup quarkus --uid 1000 quarkus
 
