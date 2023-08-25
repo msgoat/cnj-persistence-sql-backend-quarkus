@@ -24,7 +24,7 @@ services:
   downstream:
     image: docker.cloudtrain.aws.msgoat.eu/cloudtrain/cnj-persistence-sql-downstream:latest
     environment:
-      DOCKER_JAVA_OPTS: -Xms2g -Xmx2g
+      DOCKER_JAVA_OPTS: -Xms1g -Xmx1g
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain/protocol/openid-connect/certs
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain
 
@@ -35,7 +35,7 @@ services:
       - "38089:8089"
     environment:
       QUARKUS_PROFILE: dev
-      DOCKER_JAVA_OPTS: -Xms2g -Xmx2g
+      DOCKER_JAVA_OPTS: -Xms1g -Xmx1g
       AGENT_JAVA_OPTS: "-javaagent:/home/quarkus/org.jacoco.agent.jar=output=tcpserver,address=*,port=8089"
       MP_JWT_VERIFY_PUBLICKEY_LOCATION: "https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain/protocol/openid-connect/certs"
       MP_JWT_VERIFY_ISSUER: "https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain"
