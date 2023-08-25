@@ -1,6 +1,6 @@
 # docker-compose.yml
 # ----------------------------------------------------------------------------
-# Composes Docker containers and volumes to a runnable application
+# Composes Docker containers and volumes to a runnable Quarkus application
 # ----------------------------------------------------------------------------
 #
 ---
@@ -29,14 +29,12 @@ services:
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain
 
   backend:
-    image: ${docker.image.name}:${project.version}
+    image: docker.cloudtrain.aws.msgoat.eu/cloudtrain/cnj-persistence-sql-backend-quarkus:2.1.0.LOCAL.12345678
     ports:
       - "38080:8080"
-      - "38089:8089"
     environment:
       QUARKUS_PROFILE: dev
       DOCKER_JAVA_OPTS: -Xms2g -Xmx2g
-      AGENT_JAVA_OPTS: "-javaagent:/home/quarkus/org.jacoco.agent.jar=output=tcpserver,address=*,port=8089"
       MP_JWT_VERIFY_PUBLICKEY_LOCATION: "https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain/protocol/openid-connect/certs"
       MP_JWT_VERIFY_ISSUER: "https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain"
       CLOUDTRAIN_SERVICES_GRANTEDPERMISSIONS_MP_REST_URL: "http://downstream:8080"

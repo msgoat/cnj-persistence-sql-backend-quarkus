@@ -1,10 +1,10 @@
 package group.msg.at.cloud.cloudtrain.core.entity;
 
 import group.msg.at.cloud.common.persistence.jpa.audit.AbstractAuditableEntity;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,8 +17,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "T_TASK")
-@NamedQueries({@NamedQuery(name = Task.QUERY_ALL, query = "SELECT t FROM Task t ORDER BY t.id"),
-        @NamedQuery(name = Task.COUNT_ALL, query = "SELECT COUNT(t) FROM Task t")})
+@NamedQuery(name = Task.QUERY_ALL, query = "SELECT t FROM Task t ORDER BY t.id")
+@NamedQuery(name = Task.COUNT_ALL, query = "SELECT COUNT(t) FROM Task t")
 public class Task extends AbstractAuditableEntity {
 
     private static final String JPA_NAME_PREFIX = "Task.";
@@ -180,7 +180,7 @@ public class Task extends AbstractAuditableEntity {
     private int version;
 
     public Task() {
-
+        super();
     }
 
     public UUID getId() {

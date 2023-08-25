@@ -1,0 +1,308 @@
+openapi: 3.0.3
+info:
+  title: ${project.artifactId}
+  description: ${project.description}
+  version: ${revision}
+  contact:
+    url: https://github.com/msgoat/${project.artifactId}
+servers:
+  - url: ${k8s.test.target.route}
+paths:
+  /api/v1/tasks:
+    get:
+      tags:
+        - Tasks Resource
+      summary: returns all tasks
+      responses:
+        "200":
+          description: body contains all available tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schema/Task'
+      security:
+        - oidc:
+            - openid
+            - microprofile-jwt
+    post:
+      tags:
+        - Tasks Resource
+      summary: creates a new task based on the given task data and returns its location
+        URI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        "201":
+          description: task could be created successfully; header location contains
+            URI of newly created task; body is empty
+          headers:
+            Location:
+              description: URI of newly created task
+              style: simple
+        "400":
+          description: failed to create new task due to invalid task data
+        "500":
+          description: failed to create new task due to internal error
+      security:
+        - oidc:
+            - openid
+            - microprofile-jwt
+  /api/v1/tasks/{taskId}:
+    get:
+      tags:
+        - Tasks Resource
+      summary: returns the task with the given task ID
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: body contains the task with the given task ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schema/Task'
+        "400":
+          description: unable to find a task with the given task ID; body is empty
+      security:
+        - oidc:
+            - openid
+            - microprofile-jwt
+    put:
+      tags:
+        - Tasks Resource
+      summary: updates the given task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        "204":
+          description: task could be updated successfully; body is empty
+        "400":
+          description: failed to update task due to invalid task data
+        "500":
+          description: failed to create new task due to internal error
+      security:
+        - oidc:
+            - openid
+            - microprofile-jwt
+    delete:
+      tags:
+        - Tasks Resource
+      summary: deletes the given task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        "204":
+          description: task could be deleted successfully; body is empty
+        "500":
+          description: failed to delete task due to internal error
+      security:
+        - oidc:
+            - openid
+            - microprofile-jwt
+components:
+  schemas:
+    LocalDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50
+    Task:
+      description: represents a task
+      required:
+        - subject
+        - category
+        - priority
+        - lifeCycleState
+      type: object
+      properties:
+        id:
+          description: unique identifier of this task
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/UUID'
+          readOnly: true
+        subject:
+          description: single-line description or summary of what this task is about
+          maxLength: 80
+          type: string
+        description:
+          description: detailed description of this task
+          maxLength: 1024
+          type: string
+        category:
+          description: "groups task into specific categories (see: TaskCategory)"
+          enum:
+            - UNDEFINED
+            - BUGFIX
+            - REFACTORING
+            - NEW_FEATURE
+            - PERFORMANCE_IMPROVEMENT
+            - RELEASE_MANAGEMENT
+            - QUALITY_ASSURANCE
+            - BUILD_FAILURE
+            - COMMUNICATION
+          type: object
+        priority:
+          description: priority
+          enum:
+            - UNDEFINED
+            - LOW
+            - MEDIUM
+            - HIGH
+            - CRITICAL
+          type: object
+        lifeCycleState:
+          description: status of this task
+          enum:
+            - UNDEFINED
+            - OPEN_UNDER_WORK
+            - OPEN_RUNNING
+            - CLOSED_COMPLETED
+            - CLOSED_REVOKED
+            - CLOSED_CANCELLED
+          type: object
+        submittedAt:
+          description: date/time when this task has been submitted
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/LocalDateTime'
+        submitterUserId:
+          description: user-ID of participant who submitted this task
+          type: string
+        dueDate:
+          description: date/time when this task is supposed to be completed
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/LocalDateTime'
+        completionRate:
+          format: int32
+          description: "completion rate in percent, ranges from 0 to 100"
+          maximum: 100
+          minimum: 0
+          type: integer
+        completionDate:
+          description: date/time when this task has been completed
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/LocalDateTime'
+        completedByUserId:
+          description: user-ID of participant who completed this task
+          maxLength: 16
+          type: string
+        responsibleUserId:
+          description: user-ID of participant who is currently responsible for the
+            completion of this task
+          maxLength: 16
+          type: string
+        affectedProjectId:
+          description: project-ID of the project this task is related to
+          maxLength: 32
+          type: string
+        affectedApplicationId:
+          description: application-ID of the application this task is related to
+          maxLength: 32
+          type: string
+        affectedModule:
+          description: name of the logical module this task is related to
+          maxLength: 32
+          type: string
+        affectedResource:
+          description: application resource that this task is referring to
+          maxLength: 256
+          type: string
+        estimatedEffort:
+          format: int32
+          description: estimated effort in hours to complete this task
+          type: integer
+        actualEffort:
+          format: int32
+          description: actual effort in hours to complete this task
+          type: integer
+        createdBy:
+          description: user-ID of the user who created this task
+          maxLength: 31
+          type: string
+          readOnly: true
+        createdAt:
+          description: date/time when this task has been created
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/LocalDateTime'
+          readOnly: true
+        lastModifiedBy:
+          description: user-ID of the last user who modified this task
+          maxLength: 31
+          type: string
+          readOnly: true
+        lastModifiedAt:
+          description: date/time when this task has been modified
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/LocalDateTime'
+          readOnly: true
+    TaskCategory:
+      description: "groups task into specific categories (see: TaskCategory)"
+      enum:
+        - UNDEFINED
+        - BUGFIX
+        - REFACTORING
+        - NEW_FEATURE
+        - PERFORMANCE_IMPROVEMENT
+        - RELEASE_MANAGEMENT
+        - QUALITY_ASSURANCE
+        - BUILD_FAILURE
+        - COMMUNICATION
+      type: object
+    TaskLifeCycleState:
+      description: status of this task
+      enum:
+        - UNDEFINED
+        - OPEN_UNDER_WORK
+        - OPEN_RUNNING
+        - CLOSED_COMPLETED
+        - CLOSED_REVOKED
+        - CLOSED_CANCELLED
+      type: object
+    TaskPriority:
+      description: priority
+      enum:
+        - UNDEFINED
+        - LOW
+        - MEDIUM
+        - HIGH
+        - CRITICAL
+      type: object
+    UUID:
+      format: uuid
+      pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+      type: string
+  securitySchemes:
+    oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://oidc.cloudtrain.aws.msgoat.eu/realms/cloudtrain/.well-known/openid-configuration
+    SecurityScheme:
+      type: http
+      description: Authentication
+      scheme: bearer
+      bearerFormat: JWT
+
+
