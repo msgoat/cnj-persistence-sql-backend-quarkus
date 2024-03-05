@@ -4,6 +4,29 @@ Cloud native Quarkus application using JPA-based persistence to persist its doma
 
 > Attention: Quarkus in Uber JAR mode does not run on __Alpine__ images!!!
 
+The application is packaged as a multi-architecture docker image which supports the following platforms:
+* linux/amd64
+* linux/arm64/v8
+
+## Synopsis
+
+This showcase demonstrates
+* how to integrate relational databases in Spring Boot application using JPA
+* how to create evolve relational database schemas using FlyWay
+
+### Extensions to JPA
+
+Although JPA is a great way to bind data from relational databases to Java applications, the JPA is still missing some
+features like auditable entities etc. In order to add these features to JPA compliant applications, this showcase is
+depending on the CloudTrain library `cnj-common-persistence-jakarta`.
+See GitHub repo [cnj-common-persistence-jakarta](https://github.com/msgoat/cnj-common-persistence-jakarta) for details.
+
+### Database schema management
+
+The SQL files to create and update the database schema are part of the application code at `/src/main/resources/db.migration`.
+Just by adding `quarkus-flyway` as a dependency to the application's POM, Quarkus automatically
+triggers a FlyWay run when the application is started.
+
 ## Status
 
 ![Build status](https://codebuild.eu-west-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiS2kvd1p0cXVWM2tEVzF6YTlYLzBOL1AwOXpQQzE5Tzd5eVdiSE5CeVpNWi8xdzBzampkK3JoczhxVUp1RVdFRFhwNTdhMFhiLzBXby9GN29xb3YydUdVPSIsIml2UGFyYW1ldGVyU3BlYyI6ImZMVk1WdlBKSlg0dXRDNmEiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main)
@@ -16,24 +39,9 @@ Check [changelog](changelog.md) for latest version and release information.
 
 `docker pull docker.cloudtrain.aws.msgoat.eu/cloudtrain/cnj-persistence-sql-backend-quarkus`
 
-## Synopsis
+## Helm Pull Command
 
-This showcase demonstrates
-* how to integrate relational databases in Spring Boot application using JPA
-* how to create evolve relational database schemas using FlyWay
-
-### Extensions to JPA
-
-Although JPA is a great way to bind data from relational databases to Java applications, the JPA is still missing some
-features like auditable entities etc. In order to add these features to JPA compliant applications, this showcase is 
-depending on the CloudTrain library `cnj-common-persistence-jakarta`. 
-See GitHub repo [cnj-common-persistence-jakarta](https://github.com/msgoat/cnj-common-persistence-jakarta) for details.
-
-### Database schema management
-
-The SQL files to create and update the database schema are part of the application code at `/src/main/resources/db.migration`.
-Just by adding `quarkus-flyway` as a dependency to the application's POM, Quarkus automatically
-triggers a FlyWay run when the application is started.
+`helm pull docker.cloudtrain.aws.msgoat.eu/cloudtrain-charts/cnj-persistence-sql-backend-quarkus`
 
 ## HOW-TO build this application locally
 
@@ -65,5 +73,3 @@ docker compose down
 The showcase application will be accessible:
 * locally via `http://localhost:38080`
 * remotely via `https://train2023-dev.k8s.cloudtrain.aws.msgoat.eu/cloudtrain/cnj-persistence-sql-backend-quarkus` (if the training cluster is up and running)
-
-The OpenAPI specification of the exposed REST API is available at URI `/q/openapi`.
